@@ -39,7 +39,7 @@ def save():
     }
 
     if len(website) ==0  or len(password) == 0:
-        messagebox.showwarning(title="Warning", message="Please don't leave any fields empty")
+        messagebox.showinfo(title="Warning", message="Please don't leave any fields empty")
     else:
         try:
             with open("data.json", "r") as data_file:
@@ -54,6 +54,21 @@ def save():
         finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
+
+def find_password():
+    website = website_entry.get()
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Warning", message='No data file found')
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f'Email: {email}\nPassword: {password}')
+        else:
+            messagebox.showinfo(title='Error', message=f'No details for {website} exists')
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -77,12 +92,12 @@ email_label.grid(column=0, row=2)
 password_label = Label(text="Password:")
 password_label.grid(column=0, row=3)
 
-website_entry = Entry(width=35)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(width=21)
+website_entry.grid(column=1, row=1)
 website_entry.focus()
 
-email_entry = Entry(width=35)
-email_entry.grid(column=1, row=2, columnspan=2)
+email_entry = Entry(width=21)
+email_entry.grid(column=1, row=2)
 email_entry.insert(END, "thejohncjordan@gmail.com")
 
 password_entry = Entry(width=21)
@@ -90,6 +105,12 @@ password_entry.grid(column=1, row=3)
 
 generate_button = Button(text="Generate Password", command=generate_password)
 generate_button.grid(column=2, row=3)
+generate_button.config(width=15)
+
+search_button = Button(text="Search", command=find_password)
+search_button.config(width=15)
+search_button.grid(column=2, row=1)
+
 
 add_button = Button(text="Add", command=save)
 add_button.grid(column=1, row=4, columnspan=2)
